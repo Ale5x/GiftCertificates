@@ -1,0 +1,63 @@
+.search-order-details-content {
+    width: 10%;
+    padding: 10px 15px;
+    border: 1px solid;
+    border-radius: 10px;
+    background-color: #0bd4c0;
+    text-align: center;
+    margin-top: 30px;
+    margin-left: calc(50% - 10%/2);
+}
+
+.btn-details-item-info, .btn-order-details-reset {
+    color: black;
+    background-color: rgb(194, 188, 188);
+    padding: .6em 1em calc(.6em + 3px);
+    border-radius: 5px;
+    font-size: 18px;
+    transition: transform 100ms ease-in;
+    margin: 3px;
+    will-change: transform;
+    transform-origin: center center;
+    cursor: pointer;
+}
+
+.btn-details-item-info:hover {
+    transform: scale(1.2);
+}
+
+.btn-order-details-reset:hover {
+    transform: scale(1.2);
+}
+
+.btn-order-details-reset {
+    font-size: 15px;
+    margin-left: 20px;
+    border-radius: 10px;
+    background: rgba(206, 26, 110, 0.767);
+}
+
+.position-center {
+    text-align: center;
+}
+
+.order-details-content-table {
+    width: 95%; 
+    border-collapse: collapse; 
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 20px;
+   }
+ .order-details-content-table td, th {
+    padding: 3px; 
+    border: 1px solid #000; 
+   }
+.order-details-content-table th {
+    background: grey;
+    color: black;  
+   }
+.order-details-content-table tbody tr:hover {
+    background: rgb(37, 36, 36);
+    color: #fff; 
+   }

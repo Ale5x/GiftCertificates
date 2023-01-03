@@ -1,0 +1,31 @@
+.order-room-content-title {
+    text-align: center;
+    font-size: 35px;
+    margin-top: 15px;
+    font-family: cursive;
+}
+
+.order-room-content {
+    width: 90%;
+    /* margin-top: 30px; */
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 25px;
+    font-family: 'Times New Roman';
+    padding: 20px;
+    margin-bottom: 45px;
+}
+
+.order-room-content label {
+    padding: 25px;
+}
+
+.order-room-content b {
+    font-size: 25px;
+    font-family: cursive;
+}
+
+.order-room-content-details {
+    margin-top: 20px;
+    margin-left: 30px;
+}

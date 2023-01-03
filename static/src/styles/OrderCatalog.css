@@ -1,0 +1,123 @@
+.order-catalog-content {
+    width: 100%;
+
+    /* background-color: rgb(150, 150, 150); */
+}
+
+.search-order-content {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    display: inline-blocks;
+    text-align: center;
+}
+
+.search-order-content button{
+    
+    margin-left: 20px;
+    padding: 10px;
+}
+
+.search-order-content input {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    
+    padding: 10px 15px;
+    border: 1px solid;
+    border-radius: 20px;
+    background-color: #0bd4c0;
+    text-align: center;
+}
+
+.settings-order-content {
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    display: inline-blocks;
+    text-align: center;
+}
+
+.settings-order-span {
+    padding: 10px;
+}
+
+.settings-order-span select {
+    margin-left: 30px;
+}
+
+.order-main-content {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 98%;
+}
+
+.order-content-table {
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 20px;
+    border-collapse: collapse;
+    text-align: center;
+   }
+ .order-content-table td, th {
+    padding: 3px;
+    border: 1px solid #000;
+   }
+.order-content-table th {
+    background: grey;
+    color: black;
+   }
+.order-content-table tbody tr:hover {
+    background: rgb(37, 36, 36);
+    color: #fff;
+}
+
+.btn-order-info, .btn-order-serach-by-user, .btn-order-search-by-id {
+    font-weight: 700;
+    color: black;
+    text-decoration: none;
+    padding: .8em 1em calc(.8em + 3px);
+    border-radius: 3px;
+    /* transition: 0.2s; */
+    font-size: 17px;
+    transition: transform 100ms ease-in;
+    margin: 3px;
+    will-change: transform;
+    transform-origin: center center;
+    cursor: pointer;
+
+    
+}
+
+.btn-order-user-info {
+    color: black;
+    background-color: grey;
+    padding: .6em 1em calc(.6em + 3px);
+    border-radius: 5px;
+    font-size: 18px;
+    transition: transform 100ms ease-in;
+    margin: 3px;
+    will-change: transform;
+    transform-origin: center center;
+    cursor: pointer;
+}
+
+.btn-order-user-info:hover{
+    transform: scale(1.2);
+}
+
+.btn-order-info:hover{
+    transform: scale(1.2);
+}
+
+.btn-order-info {
+    background: rgb(0, 140, 255);
+}
+
+.btn-order-search-by-id, .btn-order-serach-by-user {
+    font-size: 20px;
+    border-radius: 15px;
+    background-color: #0bd4c0;
+}

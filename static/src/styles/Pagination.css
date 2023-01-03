@@ -1,0 +1,53 @@
+.pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 70px;
+
+}
+.current-page {
+    font-size: 25px;
+   
+    font-weight: 700;
+    margin: 10px 10px;  
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
+.jump-page {
+    margin-top: -50px;
+}
+
+.jump-page input {
+    width: 40px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1px solid;
+    margin-left: 10px;
+    will-change: transform;
+    transform-origin: center center;
+}
+
+.position-prev-btn {
+    margin-left: 5%;
+}
+
+.pages-conteiner {
+    display: flex;
+    margin: 30px;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
+.position-pages {
+    width: 100px;
+    margin-left: 30%;
+}
+
+.position-next-btn {
+    margin-left: 30%;
+}

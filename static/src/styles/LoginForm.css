@@ -1,0 +1,158 @@
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: montserrat, sans-serif;
+} */
+
+.LoginForm, .RegistrationForm input, button {
+    appearance: none;
+    background: none;
+    border: none;
+    outline: none;
+
+    
+}
+
+.LoginForm, .RegistrationForm {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #53565a;
+
+  
+}
+
+.form-position {
+    display: block;
+    position: relative;
+    z-index: 5;
+}
+
+.form-position:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    z-index: 1;
+    /* background-image: linear-gradient(to bottom right, #FFCE00, #FE4880); */
+}
+
+.form-position .form-inner {
+    width: 330px;
+    border-radius: 10px;
+    position: relative;
+    display: block;
+    background-color: #FFF;
+    padding: 30px;
+    z-index: 2;
+}
+
+.form-position .form-inner h2 {
+    color: #888;
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.form-position .form-inner .form-group {
+    display: block;
+    width: 300px;
+    margin-bottom: 15px;
+}
+
+.form-position .form-inner .form-group label {
+    display: block;
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 5px;
+    transition: 0.4s;
+}
+
+.form-position .form-inner .form-group:focus-within label {
+    color: #FE4800;
+}
+
+.form-position .form-inner .form-group input {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    background-color: rgb(230, 187, 187);
+    border-radius: 8px;
+    transition: 0.4s;
+}
+
+.form-position .form-inner .form-group input:focus {
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2);
+}
+
+.btn-login, .btn-cancel {
+    color: white;
+    background-color: black;
+    height: 40px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: rgba(214, 13, 13, .8);
+    margin-left: 0;
+    border-radius: 5px;
+    padding: 5px;
+}
+.position-btn {
+    display: flex;
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.welcome {
+    width: 100%;
+    max-width: 480px;
+    background-color: #FFF;
+    padding: 15px 30px;
+}
+
+.welcome h2 {
+    color: #888;
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.welcome h2 span {
+    color: #FE4880;
+    font-weight: 700;
+}
+
+.error_message {
+    color: red;
+    font-size: 25px;
+}
+
+.position-centr {
+
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: montserrat, sans-serif;
+
+    width: 100%;
+    height: 100%;
+   
+ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(to right, #FFCE00 50%, #FFCE00 50%, #FF4880);
+    
+}
+
