@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Core</a> &gt; <a href="index.source.html" class="el_package">com.epam.esm.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.epam.esm.model;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * The type User. The class is mapped to a table from the database.
+ *
+ * @author Alexander Pishchala
+ */
+@Entity
+@Table(name = &quot;users&quot;)
+public class User implements Serializable {
+
+    private static final long serialVersionUID = -9188389373515799688L;
+
+    @Column(name = &quot;id_users&quot;)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int userId;
+
+    @Column(name = &quot;first_name&quot;)
+    private String firstName;
+
+    @Column(name = &quot;last_name&quot;)
+    private String lastName;
+
+    @Column(name = &quot;email&quot;)
+    private String email;
+
+    @Column(name = &quot;password&quot;)
+    private String password;
+
+    @ManyToOne
+    @JoinColumn(name=&quot;id_status&quot;)
+    private UserStatus status;
+
+    @Column(name = &quot;create_date&quot;)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDateTime createDate;
+
+    @Column(name = &quot;update_date&quot;)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDateTime updateDate;
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = &quot;users_roles&quot;,
+            joinColumns = { @JoinColumn(name = &quot;id_users&quot;) },
+            inverseJoinColumns = { @JoinColumn(name = &quot;id_roles&quot;)})
+    private Set&lt;Role&gt; roles;
+
+<span class="pc" id="L60">    @OneToMany(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL)</span>
+    private List&lt;Order&gt; orders = new ArrayList&lt;&gt;();
+
+    /**
+     * Instantiates a new User.
+     */
+<span class="fc" id="L66">    public User() {</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Instantiates a new User.
+     *
+     * @param firstName the User first name.
+     * @param lastName the User last name.
+     * @param email the User email.
+     * @param password the User password.
+     * @param status the User status.
+     */
+<span class="nc" id="L78">    public User(String firstName, String lastName, String email, String password, UserStatus status) {</span>
+<span class="nc" id="L79">        this.firstName = firstName;</span>
+<span class="nc" id="L80">        this.lastName = lastName;</span>
+<span class="nc" id="L81">        this.email = email;</span>
+<span class="nc" id="L82">        this.password = password;</span>
+<span class="nc" id="L83">        this.status = status;</span>
+<span class="nc" id="L84">    }</span>
+
+<span class="nc" id="L86">    public User(String firstName, String lastName, String email, String password) {</span>
+<span class="nc" id="L87">        this.firstName = firstName;</span>
+<span class="nc" id="L88">        this.lastName = lastName;</span>
+<span class="nc" id="L89">        this.email = email;</span>
+<span class="nc" id="L90">        this.password = password;</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Instantiates a new User.
+     *
+     * @param userId the User id.
+     * @param firstName the User first name.
+     * @param lastName the User last name.
+     * @param email the User email.
+     */
+<span class="nc" id="L101">    public User(int userId, String firstName, String lastName, String email) {</span>
+<span class="nc" id="L102">        this.userId = userId;</span>
+<span class="nc" id="L103">        this.firstName = firstName;</span>
+<span class="nc" id="L104">        this.lastName = lastName;</span>
+<span class="nc" id="L105">        this.email = email;</span>
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * Getting the User id.
+     *
+     * @return the User id.
+     */
+    public int getUserId() {
+<span class="nc" id="L114">        return userId;</span>
+    }
+
+    /**
+     * Setting the User id.
+     *
+     */
+    public void setUserId(int userId) {
+<span class="nc" id="L122">        this.userId = userId;</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Getting the first name.
+     *
+     * @return the firstName.
+     */
+    public String getFirstName() {
+<span class="nc" id="L131">        return firstName;</span>
+    }
+
+    /**
+     * Setting the first name.
+     *
+     */
+    public void setFirstName(String firstName) {
+<span class="nc" id="L139">        this.firstName = firstName;</span>
+<span class="nc" id="L140">    }</span>
+
+    /**
+     * Getting the last name.
+     *
+     * @return the lastName.
+     */
+    public String getLastName() {
+<span class="nc" id="L148">        return lastName;</span>
+    }
+
+    /**
+     * Setting the last name.
+     *
+     */
+    public void setLastName(String lastName) {
+<span class="nc" id="L156">        this.lastName = lastName;</span>
+<span class="nc" id="L157">    }</span>
+
+    /**
+     * Getting the email.
+     *
+     * @return the email.
+     */
+    public String getEmail() {
+<span class="nc" id="L165">        return email;</span>
+    }
+
+    /**
+     * Setting the email.
+     *
+     */
+    public void setEmail(String email) {
+<span class="nc" id="L173">        this.email = email;</span>
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * Getting the orders of User.
+     *
+     * @return the orders of User.
+     */
+    public List&lt;Order&gt; getOrders() {
+<span class="nc" id="L182">        return orders;</span>
+    }
+
+    /**
+     * Setting the orders of User.
+     *
+     */
+    public void setOrders(List&lt;Order&gt; orders) {
+<span class="nc" id="L190">        this.orders = orders;</span>
+<span class="nc" id="L191">    }</span>
+
+    public String getPassword() {
+<span class="nc" id="L194">        return password;</span>
+    }
+
+    public void setPassword(String password) {
+<span class="nc" id="L198">        this.password = password;</span>
+<span class="nc" id="L199">    }</span>
+
+    public Set&lt;Role&gt; getRoles() {
+<span class="nc" id="L202">        return roles;</span>
+    }
+
+    public void setRoles(Set&lt;Role&gt; roles) {
+<span class="nc" id="L206">        this.roles = roles;</span>
+<span class="nc" id="L207">    }</span>
+
+    public UserStatus getStatus() {
+<span class="nc" id="L210">        return status;</span>
+    }
+
+    public void setStatus(UserStatus status) {
+<span class="nc" id="L214">        this.status = status;</span>
+<span class="nc" id="L215">    }</span>
+
+    public LocalDateTime getCreateDate() {
+<span class="fc" id="L218">        return createDate;</span>
+    }
+
+    public void setCreateDate(LocalDateTime createDate) {
+<span class="nc" id="L222">        this.createDate = createDate;</span>
+<span class="nc" id="L223">    }</span>
+
+    public LocalDateTime getUpdateDate() {
+<span class="fc" id="L226">        return updateDate;</span>
+    }
+
+    public void setUpdateDate(LocalDateTime updateDate) {
+<span class="nc" id="L230">        this.updateDate = updateDate;</span>
+<span class="nc" id="L231">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L236" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+
+<span class="nc" id="L238">        User user = (User) o;</span>
+
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        if (userId != user.userId) return false;</span>
+<span class="nc bnc" id="L241" title="All 6 branches missed.">        if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) return false;</span>
+<span class="nc bnc" id="L242" title="All 6 branches missed.">        if (lastName != null ? !lastName.equals(user.lastName) : user.lastName != null) return false;</span>
+<span class="nc bnc" id="L243" title="All 6 branches missed.">        if (email != null ? !email.equals(user.email) : user.email != null) return false;</span>
+<span class="nc bnc" id="L244" title="All 4 branches missed.">        return orders != null ? orders.equals(user.orders) : user.orders == null;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L249">        int result = userId;</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        result = 31 * result + (email != null ? email.hashCode() : 0);</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        result = 31 * result + (orders != null ? orders.hashCode() : 0);</span>
+<span class="nc" id="L254">        return result;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L259">        StringBuilder line = new StringBuilder();</span>
+<span class="nc" id="L260">        line.append(&quot;User{userId=&quot;).append(userId)</span>
+<span class="nc" id="L261">                .append(&quot;, firstName='&quot;).append(firstName)</span>
+<span class="nc" id="L262">                .append(&quot;, lastName='&quot;).append(lastName)</span>
+<span class="nc" id="L263">                .append(&quot;, email='&quot;).append(email)</span>
+<span class="nc" id="L264">                .append(&quot;, role=&quot;).append(roles)</span>
+<span class="nc" id="L265">                .append(&quot;, status=&quot;).append(status)</span>
+<span class="nc" id="L266">                .append(&quot;, Orders={&quot;).append(orders).append('}');</span>
+<span class="nc" id="L267">        return line.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

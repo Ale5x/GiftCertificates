@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Core</a> &gt; <a href="index.source.html" class="el_package">com.epam.esm.service.impl</a> &gt; <span class="el_source">OrderServiceImpl.java</span></div><h1>OrderServiceImpl.java</h1><pre class="source lang-java linenums">package com.epam.esm.service.impl;
+
+import com.epam.esm.dao.OrderDao;
+import com.epam.esm.exception.ServiceException;
+import com.epam.esm.model.Dto.OrderDetailsDto;
+import com.epam.esm.model.Dto.OrderDto;
+import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.model.Order;
+import com.epam.esm.model.OrderDetails;
+import com.epam.esm.model.User;
+import com.epam.esm.service.OrderDetailsService;
+import com.epam.esm.service.OrderService;
+import com.epam.esm.util.LocalUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * The type Order service implements methods of the Order interface.
+ * The class is annotated as a service, which qualifies it to be automatically created by component-scanning.
+ *
+ * @author Alexander Pishchala
+ */
+@Service
+public class OrderServiceImpl implements OrderService {
+
+<span class="fc" id="L37">    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);</span>
+
+    private static final String ISO_FORMAT_DATE = &quot;yyyy-MM-dd'T'HH:mm:ss&quot;;
+    public static final String ORDER_BY_ID_NOT_FOUND_CODE = &quot;code.order.not_found&quot;;
+    public static final String ORDER_BY_ID_NOT_FOUND = &quot;Order not found by ID. ID: &quot;;
+
+    private OrderDao orderDao;
+    private LocalUtil localUtil;
+    private OrderDetailsService orderDetailsService;
+
+    @Autowired
+<span class="fc" id="L48">    public OrderServiceImpl(OrderDao orderDao, LocalUtil localUtil, OrderDetailsService orderDetailsService) {</span>
+<span class="fc" id="L49">        this.orderDao = orderDao;</span>
+<span class="fc" id="L50">        this.localUtil = localUtil;</span>
+<span class="fc" id="L51">        this.orderDetailsService = orderDetailsService;</span>
+<span class="fc" id="L52">    }</span>
+
+    @Override
+    public boolean save(OrderDto orderDto) {
+<span class="nc" id="L56">        Order order = new Order();</span>
+<span class="nc" id="L57">        order.setPurchaseTime(LocalDateTime.parse(</span>
+<span class="nc" id="L58">                LocalDateTime.now().format(DateTimeFormatter.ofPattern(ISO_FORMAT_DATE))));</span>
+<span class="nc" id="L59">        BigDecimal cost = new BigDecimal(0);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        for (OrderDetailsDto detailDto : orderDto.getOrderDetails()) {</span>
+<span class="nc" id="L61">            cost = cost.add(detailDto.getPrice());</span>
+<span class="nc" id="L62">            order.setSingleOrderDetail(builderOrderDetail(detailDto));</span>
+<span class="nc" id="L63">        }</span>
+<span class="nc" id="L64">        order.setCost(cost);</span>
+<span class="nc" id="L65">        User user = new User();</span>
+<span class="nc" id="L66">        user.setUserId(orderDto.getUserId());</span>
+<span class="nc" id="L67">        order.setUser(user);</span>
+
+<span class="nc" id="L69">        return orderDao.create(order);</span>
+    }
+
+    @Override
+    public boolean delete(int orderId) {
+<span class="nc" id="L74">        Optional&lt;Order&gt; order = orderDao.findOrder(orderId);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (order.isPresent()) {</span>
+<span class="nc" id="L76">            return orderDao.delete(orderId);</span>
+        } else {
+<span class="nc" id="L78">            logger.error(ORDER_BY_ID_NOT_FOUND + orderId);</span>
+<span class="nc" id="L79">            throw new ServiceException((localUtil.getMessage(ORDER_BY_ID_NOT_FOUND_CODE)) + orderId);</span>
+        }
+    }
+
+    @Override
+    @Transactional
+    public Optional&lt;OrderDto&gt; showOrder(int orderId) {
+<span class="nc" id="L86">        Optional&lt;Order&gt; order = orderDao.findOrder(orderId);</span>
+<span class="nc" id="L87">        return order.map(value -&gt; builderOrderDto(Collections.singletonList(value)).get(0));</span>
+    }
+
+    @Override
+    @Transactional
+    public List&lt;OrderDto&gt; showOrders(int limit, int offset) {
+<span class="nc" id="L93">        return builderOrderDto(orderDao.getOrders(limit, offset));</span>
+    }
+
+    @Override
+    @Transactional
+    public List&lt;OrderDto&gt; showByUser(int limit, int offset, int userId) {
+<span class="nc" id="L99">        return builderOrderDto(orderDao.findByUser(limit, offset, userId));</span>
+    }
+
+    @Override
+    public int showCountOrders() {
+<span class="nc" id="L104">        return orderDao.findCountOrders();</span>
+    }
+
+    /**
+     * Builder list of Order Dto by list of Order entity. This is a helper method needed to avoid
+     * code duplication.
+     *
+     * @param orders the list of orders.
+     *
+     * @return list of Order Dto.
+     */
+    private List&lt;OrderDto&gt; builderOrderDto(List&lt;Order&gt; orders){
+<span class="nc" id="L116">        List&lt;OrderDto&gt; orderList = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        for (Order order : orders) {</span>
+<span class="nc" id="L119">            OrderDto orderDto = new OrderDto();</span>
+
+<span class="nc" id="L121">            orderDto.setOrderId(order.getOrderId());</span>
+<span class="nc" id="L122">            orderDto.setUserId(order.getUser().getUserId());</span>
+<span class="nc" id="L123">            orderDto.setCost(order.getCost());</span>
+<span class="nc" id="L124">            orderDto.setPurchaseTime(order.getPurchaseTime());</span>
+<span class="nc" id="L125">            orderDto.setOrderDetails(orderDetailsService.findDetailsByOrder(order.getOrderId()));</span>
+
+<span class="nc" id="L127">            orderList.add(orderDto);</span>
+<span class="nc" id="L128">        }</span>
+<span class="nc" id="L129">        return orderList;</span>
+    }
+
+//    /**
+//     * Builder list of OrderDetails Dto by list of OrderDetails entity. This is a helper method needed to avoid
+//     * code duplication.
+//     *
+//     * @param orderDetails the list of orderDetails.
+//     *
+//     * @return list of OrderDetails Dto.
+//     */
+//    private List&lt;OrderDetailsDto&gt; builderOrderDetailsDto(List&lt;OrderDetails&gt; orderDetails) {
+//        List&lt;OrderDetailsDto&gt; orderDetailsDtoList = new ArrayList&lt;&gt;();
+//        for (OrderDetails orderDetail : orderDetails) {
+//            OrderDetailsDto orderDetailsDto = new OrderDetailsDto();
+//
+//            orderDetailsDto.setOrderDetailsId(orderDetail.getOrderDetailsId());
+//            orderDetailsDto.setCertificateId(orderDetail.getCertificate().getGiftCertificateId());
+//            orderDetailsDto.setOrderId(orderDetail.getOrder().getOrderId());
+//            orderDetailsDto.setPrice(orderDetail.getPrice());
+//
+//            orderDetailsDtoList.add(orderDetailsDto);
+//        }
+//        return orderDetailsDtoList;
+//    }
+
+    private OrderDetails builderOrderDetail(OrderDetailsDto orderDetailsDto) {
+<span class="nc" id="L156">        OrderDetails orderDetail = new OrderDetails();</span>
+<span class="nc" id="L157">        GiftCertificate certificate = new GiftCertificate();</span>
+<span class="nc" id="L158">        certificate.setGiftCertificateId(orderDetailsDto.getCertificateId());</span>
+<span class="nc" id="L159">        orderDetail.setCertificate(certificate);</span>
+<span class="nc" id="L160">        orderDetail.setPrice(orderDetailsDto.getPrice());</span>
+
+<span class="nc" id="L162">        return orderDetail;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

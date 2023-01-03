@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserStatusDaoImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Core</a> &gt; <a href="index.source.html" class="el_package">com.epam.esm.dao.impl</a> &gt; <span class="el_source">UserStatusDaoImpl.java</span></div><h1>UserStatusDaoImpl.java</h1><pre class="source lang-java linenums">package com.epam.esm.dao.impl;
+
+import com.epam.esm.dao.UserStatusDao;
+import com.epam.esm.model.EUserStatus;
+import com.epam.esm.model.UserStatus;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+@Transactional
+public class UserStatusDaoImpl implements UserStatusDao {
+
+    private SessionFactory sessionFactory;
+    private static final String GET_STATUS_QUERY = &quot;SELECT  * from statuses WHERE name=&quot;;
+
+    @Autowired
+<span class="fc" id="L25">    public UserStatusDaoImpl(SessionFactory sessionFactory) {</span>
+<span class="fc" id="L26">        this.sessionFactory = sessionFactory;</span>
+<span class="fc" id="L27">    }</span>
+
+    @Override
+    public Optional&lt;UserStatus&gt; findStatus(EUserStatus status) {
+<span class="nc" id="L31">        Session session = getSession();</span>
+<span class="nc" id="L32">        StringBuilder query = new StringBuilder(GET_STATUS_QUERY);</span>
+<span class="nc" id="L33">        query.append(&quot;'&quot;).append(status.name()).append(&quot;';&quot;);</span>
+<span class="nc" id="L34">        List&lt;Object[]&gt; objects = session.createNativeQuery(query.toString())</span>
+<span class="nc" id="L35">                .addScalar(&quot;id_status&quot;, IntegerType.INSTANCE)</span>
+<span class="nc" id="L36">                .addScalar(&quot;name&quot;, StringType.INSTANCE).list();</span>
+<span class="nc" id="L37">        UserStatus userStatus = new UserStatus();</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        for (Object[] object : objects) {</span>
+<span class="nc" id="L39">            userStatus.setStatusId((Integer) object[0]);</span>
+<span class="nc" id="L40">            userStatus.setName(EUserStatus.valueOf((String) object[1]));</span>
+<span class="nc" id="L41">        }</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (userStatus.getName() == null) {</span>
+<span class="nc" id="L43">            return Optional.empty();</span>
+        }
+<span class="nc" id="L45">        return Optional.ofNullable(userStatus);</span>
+    }
+
+    /**
+     * Method for getting the current session.
+     *
+     * @return current session.
+     */
+    private Session getSession() {
+<span class="nc" id="L54">        return sessionFactory.getCurrentSession();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

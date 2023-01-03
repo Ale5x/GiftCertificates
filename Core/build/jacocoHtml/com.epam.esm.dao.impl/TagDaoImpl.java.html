@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TagDaoImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Core</a> &gt; <a href="index.source.html" class="el_package">com.epam.esm.dao.impl</a> &gt; <span class="el_source">TagDaoImpl.java</span></div><h1>TagDaoImpl.java</h1><pre class="source lang-java linenums">package com.epam.esm.dao.impl;
+
+import com.epam.esm.dao.TagDao;
+import com.epam.esm.model.PopularTag;
+import com.epam.esm.model.Tag;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * The type Tag repository implements methods of the TagDao interface.
+ * The class is annotated with as a repository, which qualifies it to be automatically created by component-scanning.
+ *
+ * @author Alexander Pishchala
+ */
+
+@Transactional
+@Repository
+public class TagDaoImpl implements TagDao {
+
+    private SessionFactory sessionFactory;
+
+    private final static String DELETE_TAG_QUERY = &quot;DELETE Tag WHERE id =: id&quot;;
+
+    private final static String GET_ALL_TAG_BY_NAME_QUERY = &quot;from Tag WHERE name LIKE :name&quot;;
+
+    private final static String GET_POPULAR_TAG_WITH_MAX_COST_ORDERS_QUERY = &quot;select users.id_users, users.first_name, &quot; +
+            &quot;users.last_name, users.email, tags.id_tags, tags.name, count(tags.name) as counts from orders &quot; +
+            &quot;join order_details on orders.id_orders=order_details.id_orders join gift_certificates &quot; +
+            &quot;on order_details.id_certificates=gift_certificates.id_certificates join tags_gift_certificates &quot; +
+            &quot;on gift_certificates.id_certificates=tags_gift_certificates.id_certificates join tags &quot; +
+            &quot;on tags_gift_certificates.id_tags=tags.id_tags join users on orders.id_users=users.id_users &quot; +
+            &quot;where orders.id_users=(select id_users from orders group by id_users order by sum(cost) desc limit 1) &quot; +
+            &quot;group by tags.name order by count(tags.name) desc limit 1&quot;;
+
+<span class="fc" id="L47">    private static int COUNT_ROWS_SUCCESSFUL_OPERATION = 0;</span>
+
+    @Autowired
+<span class="fc" id="L50">    public TagDaoImpl(SessionFactory sessionFactory) {</span>
+<span class="fc" id="L51">        this.sessionFactory = sessionFactory;</span>
+<span class="fc" id="L52">    }</span>
+
+    @Override
+    public boolean create(Tag tag) {
+<span class="nc" id="L56">        Session session = getSession();</span>
+<span class="nc" id="L57">        session.save(tag);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        return tag.getTagId() != COUNT_ROWS_SUCCESSFUL_OPERATION;</span>
+    }
+
+    @Override
+    public Optional&lt;Tag&gt; findTag(int tagId) {
+<span class="nc" id="L63">        Session session = getSession();</span>
+<span class="nc" id="L64">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L65">        CriteriaQuery&lt;Tag&gt; criteriaQuery = criteriaBuilder.createQuery(Tag.class);</span>
+<span class="nc" id="L66">        Root&lt;Tag&gt; tagRoot = criteriaQuery.from(Tag.class);</span>
+<span class="nc" id="L67">        criteriaQuery.select(tagRoot).where(criteriaBuilder.equal(tagRoot.get(&quot;tagId&quot;), tagId));</span>
+
+<span class="nc" id="L69">        return session.createQuery(criteriaQuery).getResultList().stream().findFirst();</span>
+    }
+
+    @Override
+    public boolean delete(int tagId) {
+<span class="nc" id="L74">        Session session = getSession();</span>
+<span class="nc" id="L75">        int rows = session.createQuery(DELETE_TAG_QUERY).setParameter(&quot;id&quot;, tagId).executeUpdate();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        return rows != 0;</span>
+    }
+
+    @Override
+    public List&lt;Tag&gt; findAllTags(int limit, int offset) {
+<span class="nc" id="L81">        Session session = getSession();</span>
+
+<span class="nc" id="L83">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L84">        CriteriaQuery&lt;Tag&gt; query = criteriaBuilder.createQuery(Tag.class);</span>
+<span class="nc" id="L85">        Root&lt;Tag&gt; tagRoot = query.from(Tag.class);</span>
+<span class="nc" id="L86">        query.select(tagRoot);</span>
+
+<span class="nc" id="L88">        return session.createQuery(query).setMaxResults(limit).setFirstResult(offset).getResultList();</span>
+    }
+
+    @Override
+    public List&lt;Tag&gt; findByPartName(int limit, int offset, String name) {
+<span class="nc" id="L93">        Session session = getSession();</span>
+<span class="nc" id="L94">        Query&lt;Tag&gt; query = session.createQuery(GET_ALL_TAG_BY_NAME_QUERY).setParameter(&quot;name&quot;, &quot;%&quot; + name + &quot;%&quot;);</span>
+
+<span class="nc" id="L96">        return query.setMaxResults(limit).setFirstResult(offset).getResultList();</span>
+    }
+
+    @Override
+    public Optional&lt;Tag&gt; findByName(String name) {
+<span class="nc" id="L101">        Session session = getSession();</span>
+<span class="nc" id="L102">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L103">        CriteriaQuery&lt;Tag&gt; criteriaQuery = criteriaBuilder.createQuery(Tag.class);</span>
+<span class="nc" id="L104">        Root&lt;Tag&gt; root = criteriaQuery.from(Tag.class);</span>
+<span class="nc" id="L105">        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get(&quot;name&quot;), name));</span>
+
+<span class="nc" id="L107">        return session.createQuery(criteriaQuery).getResultList().stream().findFirst();</span>
+    }
+
+    @Override
+    public Optional&lt;PopularTag&gt; findPopularTagByMaxCostOrdersUser() {
+<span class="nc" id="L112">        Session session = getSession();</span>
+<span class="nc" id="L113">        List&lt;Object[]&gt; objects = session.createNativeQuery(GET_POPULAR_TAG_WITH_MAX_COST_ORDERS_QUERY)</span>
+<span class="nc" id="L114">                .addScalar(&quot;id_users&quot;, IntegerType.INSTANCE)</span>
+<span class="nc" id="L115">                .addScalar(&quot;first_name&quot;, StringType.INSTANCE)</span>
+<span class="nc" id="L116">                .addScalar(&quot;last_name&quot;, StringType.INSTANCE)</span>
+<span class="nc" id="L117">                .addScalar(&quot;email&quot;, StringType.INSTANCE)</span>
+<span class="nc" id="L118">                .addScalar(&quot;id_tags&quot;, IntegerType.INSTANCE)</span>
+<span class="nc" id="L119">                .addScalar(&quot;name&quot;, StringType.INSTANCE)</span>
+<span class="nc" id="L120">                .addScalar(&quot;counts&quot;, IntegerType.INSTANCE)</span>
+<span class="nc" id="L121">                .list();</span>
+<span class="nc" id="L122">        return mapPopularTag(objects);</span>
+    }
+
+    @Override
+    public int findCountTags() {
+<span class="nc" id="L127">        Session session = getSession();</span>
+<span class="nc" id="L128">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L129">        CriteriaQuery&lt;Long&gt; criteriaQuery = criteriaBuilder.createQuery(Long.class);</span>
+<span class="nc" id="L130">        Root&lt;Tag&gt; root = criteriaQuery.from(Tag.class);</span>
+<span class="nc" id="L131">        criteriaQuery.select(criteriaBuilder.count(root));</span>
+<span class="nc" id="L132">        Query&lt;Long&gt; query = session.createQuery(criteriaQuery);</span>
+<span class="nc" id="L133">        return  query.getResultList().get(0).intValue();</span>
+    }
+
+    /**
+     * The method returns the session from SessionFactory.
+     *
+     * @return current session.
+     */
+    private Session getSession() {
+<span class="nc" id="L142">        return sessionFactory.getCurrentSession();</span>
+    }
+
+    private Optional&lt;PopularTag&gt; mapPopularTag(List&lt;Object[]&gt; objects) {
+<span class="nc" id="L146">        PopularTag popularTag = new PopularTag();</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        for (Object[] object : objects) {</span>
+<span class="nc" id="L148">            popularTag.setUserId((Integer) object[0]);</span>
+<span class="nc" id="L149">            popularTag.setFirstName((String) object[1]);</span>
+<span class="nc" id="L150">            popularTag.setLastName((String) object[2]);</span>
+<span class="nc" id="L151">            popularTag.setEmail((String) object[3]);</span>
+<span class="nc" id="L152">            popularTag.setTagId((Integer) object[4]);</span>
+<span class="nc" id="L153">            popularTag.setTagName((String) object[5]);</span>
+<span class="nc" id="L154">            popularTag.setCount((Integer) object[6]);</span>
+<span class="nc" id="L155">        }</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (popularTag == null) {</span>
+<span class="nc" id="L157">            return Optional.empty();</span>
+        }
+<span class="nc" id="L159">        return Optional.of(popularTag);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

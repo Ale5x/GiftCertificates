@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserStatusServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Core</a> &gt; <a href="index.source.html" class="el_package">com.epam.esm.service.impl</a> &gt; <span class="el_source">UserStatusServiceImpl.java</span></div><h1>UserStatusServiceImpl.java</h1><pre class="source lang-java linenums">package com.epam.esm.service.impl;
+
+import com.epam.esm.dao.UserStatusDao;
+import com.epam.esm.exception.ServiceException;
+import com.epam.esm.model.Dto.UserStatusDto;
+import com.epam.esm.model.EUserStatus;
+import com.epam.esm.model.UserStatus;
+import com.epam.esm.service.UserStatusService;
+import com.epam.esm.util.LocalUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UserStatusServiceImpl implements UserStatusService {
+
+<span class="fc" id="L20">    private static final Logger logger = LoggerFactory.getLogger(UserStatusServiceImpl.class);</span>
+
+    private UserStatusDao userStatusDao;
+    private LocalUtil localUtil;
+
+    private static final String STATUS_NOT_FOUND_CODE = &quot;code.status.not_found&quot;;
+    private static final String STATUS_NOT_FOUND_IN_DATABASE = &quot;The status is not in the database. Status: &quot;;
+
+    @Autowired
+<span class="fc" id="L29">    public UserStatusServiceImpl(UserStatusDao userStatusDao, LocalUtil localUtil) {</span>
+<span class="fc" id="L30">        this.userStatusDao = userStatusDao;</span>
+<span class="fc" id="L31">        this.localUtil = localUtil;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public UserStatus findStatus(String status) {
+<span class="nc" id="L36">        Optional&lt;UserStatus&gt; userStatus = userStatusDao.findStatus(checkStatus(status));</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if(userStatus.isEmpty()) {</span>
+<span class="nc" id="L38">            logger.error(STATUS_NOT_FOUND_IN_DATABASE + status);</span>
+        }
+<span class="nc" id="L40">        return userStatus.orElseThrow(() -&gt; new ServiceException(localUtil.getMessage(STATUS_NOT_FOUND_CODE) + status));</span>
+    }
+
+    private EUserStatus checkStatus(String status) {
+<span class="nc bnc" id="L44" title="All 4 branches missed.">        if(!(status.equalsIgnoreCase(EUserStatus.ACTIVE.name())) &amp;&amp; !(status.equalsIgnoreCase(EUserStatus.BLOCKED.name()))) {</span>
+<span class="nc" id="L45">            logger.error(STATUS_NOT_FOUND_IN_DATABASE + status);</span>
+<span class="nc" id="L46">            throw new ServiceException((localUtil.getMessage(STATUS_NOT_FOUND_CODE) + status));</span>
+        }
+<span class="nc" id="L48">        return EUserStatus.valueOf(status.toUpperCase());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

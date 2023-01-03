@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDaoImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Core</a> &gt; <a href="index.source.html" class="el_package">com.epam.esm.dao.impl</a> &gt; <span class="el_source">UserDaoImpl.java</span></div><h1>UserDaoImpl.java</h1><pre class="source lang-java linenums">package com.epam.esm.dao.impl;
+
+import com.epam.esm.model.User;
+import com.epam.esm.dao.UserDao;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * The type User repository implements methods of the UserDao interface.
+ * The class is annotated with as a repository, which qualifies it to be automatically created by component-scanning.
+ *
+ * @author Alexander Pishchala
+ */
+@Transactional
+@Repository
+public class UserDaoImpl implements UserDao {
+
+    private SessionFactory sessionFactory;
+    private final static char PERCENT_CHAR = '%';
+
+    @Autowired
+<span class="fc" id="L33">    public UserDaoImpl(SessionFactory sessionFactory) {</span>
+<span class="fc" id="L34">        this.sessionFactory = sessionFactory;</span>
+<span class="fc" id="L35">    }</span>
+
+    @Override
+    public boolean create(User user) {
+<span class="nc" id="L39">        Session session = getSession();</span>
+<span class="nc" id="L40">        session.save(user);</span>
+<span class="nc" id="L41">        session.flush();</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        return user.getUserId() &gt; 0;</span>
+    }
+
+    @Override
+    public Optional&lt;User&gt; findUser(int id) {
+<span class="fc" id="L47">        Session session = getSession();</span>
+<span class="fc" id="L48">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="fc" id="L49">        CriteriaQuery&lt;User&gt; criteriaQuery = criteriaBuilder.createQuery(User.class);</span>
+<span class="fc" id="L50">        Root&lt;User&gt; rootUser = criteriaQuery.from(User.class);</span>
+<span class="fc" id="L51">        criteriaQuery.select(rootUser).where(criteriaBuilder.equal(rootUser.get(&quot;userId&quot;), id));</span>
+
+<span class="fc" id="L53">        return session.createQuery(criteriaQuery).getResultList().stream().findFirst();</span>
+    }
+
+    @Override
+    public Optional&lt;User&gt; findUserByEmail(String email) {
+<span class="nc" id="L58">        Session session = getSession();</span>
+<span class="nc" id="L59">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L60">        CriteriaQuery&lt;User&gt; criteriaQuery = criteriaBuilder.createQuery(User.class);</span>
+<span class="nc" id="L61">        Root&lt;User&gt; rootUser = criteriaQuery.from(User.class);</span>
+<span class="nc" id="L62">        criteriaQuery.select(rootUser).where(criteriaBuilder.equal(rootUser.get(&quot;email&quot;), email));</span>
+
+<span class="nc" id="L64">        return session.createQuery(criteriaQuery).getResultList().stream().findFirst();</span>
+    }
+
+    /**
+     Session session = getSession();
+     CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+     CriteriaQuery&lt;GiftCertificate&gt; criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+     Root&lt;GiftCertificate&gt; certificateRoot = criteriaQuery.from(GiftCertificate.class);
+     SetJoin&lt;GiftCertificate, Tag&gt; certificateTagSetJoin = certificateRoot.joinSet(&quot;tags&quot;);
+     */
+    @Override
+    public List&lt;User&gt; findUsersByName(String name, int limit, int offset) {
+<span class="nc" id="L77">        Session session = getSession();</span>
+<span class="nc" id="L78">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L79">        CriteriaQuery&lt;User&gt; criteriaQuery = criteriaBuilder.createQuery(User.class);</span>
+<span class="nc" id="L80">        Root&lt;User&gt; rootUser = criteriaQuery.from(User.class);</span>
+
+<span class="nc" id="L82">        Predicate[] predicates = new Predicate[3];</span>
+<span class="nc" id="L83">        predicates[0] = criteriaBuilder.like(rootUser.get(&quot;email&quot;), createSearchCriteria(name));</span>
+<span class="nc" id="L84">        predicates[1] = criteriaBuilder.like(rootUser.get(&quot;firstName&quot;), createSearchCriteria(name));</span>
+<span class="nc" id="L85">        predicates[2] = criteriaBuilder.like(rootUser.get(&quot;lastName&quot;), createSearchCriteria(name));</span>
+<span class="nc" id="L86">        criteriaQuery.select(rootUser).where(criteriaBuilder.or(predicates)).distinct(true)</span>
+<span class="nc" id="L87">                .orderBy(criteriaBuilder.desc(rootUser.get(&quot;userId&quot;)));</span>
+
+<span class="nc" id="L89">        return session.createQuery(criteriaQuery).setMaxResults(limit).setFirstResult(offset).getResultList();</span>
+    }
+
+    @Override
+    public List&lt;User&gt; findUserList(int limit, int offset) {
+<span class="nc" id="L94">        Session session = getSession();</span>
+<span class="nc" id="L95">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L96">        CriteriaQuery&lt;User&gt; criteriaQuery = criteriaBuilder.createQuery(User.class);</span>
+<span class="nc" id="L97">        Root&lt;User&gt; userRoot = criteriaQuery.from(User.class);</span>
+<span class="nc" id="L98">        criteriaQuery.select(userRoot);</span>
+<span class="nc" id="L99">        return session.createQuery(criteriaQuery).setMaxResults(limit).setFirstResult(offset).getResultList();</span>
+    }
+
+    @Override
+    public int findCountUsers() {
+<span class="nc" id="L104">        Session session = getSession();</span>
+<span class="nc" id="L105">        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();</span>
+<span class="nc" id="L106">        CriteriaQuery&lt;Long&gt; criteriaQuery = criteriaBuilder.createQuery(Long.class);</span>
+<span class="nc" id="L107">        Root&lt;User&gt; root = criteriaQuery.from(User.class);</span>
+<span class="nc" id="L108">        criteriaQuery.select(criteriaBuilder.count(root));</span>
+<span class="nc" id="L109">        Query&lt;Long&gt; query = session.createQuery(criteriaQuery);</span>
+<span class="nc" id="L110">        return  query.getResultList().get(0).intValue();</span>
+    }
+
+    @Override
+    public boolean delete(User user) {
+<span class="nc" id="L115">        Session session = getSession();</span>
+<span class="nc" id="L116">        session.delete(user);</span>
+<span class="nc" id="L117">        return true;</span>
+    }
+
+    /**
+     * The method returns the session from SessionFactory.
+     *
+     * @return current session.
+     */
+    private Session getSession() {
+<span class="fc" id="L126">        return sessionFactory.getCurrentSession();</span>
+    }
+
+    @Override
+    public boolean update(User user) {
+<span class="nc" id="L131">        Session session = getSession();</span>
+<span class="nc" id="L132">        session.update(user);</span>
+<span class="nc" id="L133">        return true;</span>
+    }
+
+    /**
+     * The method builds the query criteria. It wraps the word into characters for SQL Query.
+     * @param name The keyword.
+     * @return The keyword in characters for SQL Query.
+     */
+    private String createSearchCriteria(String name) {
+<span class="nc" id="L142">        StringBuilder criterion = new StringBuilder();</span>
+<span class="nc" id="L143">        criterion.append(PERCENT_CHAR).append(name).append(PERCENT_CHAR);</span>
+<span class="nc" id="L144">        return criterion.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
