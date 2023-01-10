@@ -1,4 +1,0 @@
-2022-08-14 17:03:18,666 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Starting GiftCertificateDaoImplTest using Java 11 on G1 with PID 9096 (started by Александр in C:\Users\Александр\IdeaProjects\OnlineStore\Core)
-2022-08-14 17:03:18,695 DEBUG com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Running with Spring Boot v2.6.7, Spring v5.3.19
-2022-08-14 17:03:18,697 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] The following 1 profile is active: "development"
-2022-08-14 17:03:43,088 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Started GiftCertificateDaoImplTest in 26.217 seconds (JVM running for 34.296)

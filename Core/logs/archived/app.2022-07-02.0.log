@@ -1,8 +1,0 @@
-2022-07-02 21:08:52,641 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Starting GiftCertificateDaoImplTest using Java 17.0.1 on G1 with PID 5396 (started by G1$ in C:\Users\Александр\IdeaProjects\OnlineStore\Core)
-2022-07-02 21:08:52,724 DEBUG com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Running with Spring Boot v2.6.7, Spring v5.3.19
-2022-07-02 21:08:52,729 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] The following 1 profile is active: "development"
-2022-07-02 21:09:09,034 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Started GiftCertificateDaoImplTest in 17.851 seconds (JVM running for 26.906)
-2022-07-02 21:13:02,356 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Starting GiftCertificateDaoImplTest using Java 17.0.1 on G1 with PID 10980 (started by G1$ in C:\Users\Александр\IdeaProjects\OnlineStore\Core)
-2022-07-02 21:13:02,367 DEBUG com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Running with Spring Boot v2.6.7, Spring v5.3.19
-2022-07-02 21:13:02,368 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] The following 1 profile is active: "development"
-2022-07-02 21:13:18,455 INFO com.epam.esm.dao.impl.GiftCertificateDaoImplTest [Test worker] Started GiftCertificateDaoImplTest in 17.569 seconds (JVM running for 24.134)
